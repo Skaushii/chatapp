@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Socket.IO Chat App</title>
+</head>
+<body>
+  <div class="container"></div>
+  <form id="send-container">
+    <input type="text" id="message1" autocomplete="off" placeholder="Type your message...">
+    <button type="submit">Send</button>
+  </form>
+  <audio src="hehe.mp3" id="audio"></audio>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    const form = document.getElementById('send-container');
+    const messageInput = document.getElementById('message1');
+    const messageContainer = document.querySelector('.container');
+    const audio = document.getElementById('audio');
+
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const message = messageInput.value;
+      socket.emit('send', message);
+      messageInput.value = '';
+    });
+
+    socket.on('receive', data=>{
+      append(`${data.name }: ${data.message}`, 'left');
+      audio.play();
+    });
+
+    function append(message, position) {
+      const messageElement = document.createElement('div');
+      messageElement.innerText = message;
+      messageElement.classList.add('message');
+      messageElement.classList.add(position);
+      messageContainer.append(messageElement);
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+  </script>
+</body>
+</html>
